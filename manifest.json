@@ -1,0 +1,9 @@
+{
+  "id": "lifelong-calendar",
+  "name": "Lifelong Calendar",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Build a date-based life timeline with Markdown entries, reminders, linked notes, and grounded AI chat.",
+  "author": "Kushal Garg",
+  "isDesktopOnly": false
+}

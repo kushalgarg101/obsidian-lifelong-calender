@@ -1,0 +1,191 @@
+.lifelong-calendar-view {
+  height: 100%;
+}
+
+.lifelong-calendar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.lifelong-calendar-toolbar input,
+.lifelong-calendar-toolbar select {
+  min-width: 10rem;
+}
+
+.lifelong-calendar-toolbar-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.lifelong-calendar-layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1.4fr) minmax(16rem, 1fr);
+  gap: 1rem;
+  height: calc(100% - 3rem);
+}
+
+.lifelong-calendar-list,
+.lifelong-calendar-detail {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  padding: 1rem;
+  overflow: auto;
+  background: linear-gradient(180deg, var(--background-primary), var(--background-secondary));
+}
+
+.lifelong-calendar-year + .lifelong-calendar-year {
+  margin-top: 1rem;
+}
+
+.lifelong-calendar-month + .lifelong-calendar-month {
+  margin-top: 0.75rem;
+}
+
+.lifelong-calendar-day {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: var(--background-secondary-alt);
+}
+
+.lifelong-calendar-day-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.lifelong-calendar-entry-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  margin-top: 0.3rem;
+  background: transparent;
+}
+
+.lifelong-calendar-entry-button:hover,
+.lifelong-calendar-entry-button.is-selected {
+  background: var(--interactive-accent-hover);
+  color: var(--text-on-accent);
+}
+
+.lifelong-calendar-detail-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.lifelong-calendar-detail-title {
+  margin-top: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.lifelong-calendar-type-pill {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  font-size: 0.8rem;
+}
+
+.lifelong-calendar-detail-note {
+  margin-top: 0.75rem;
+  white-space: pre-wrap;
+}
+
+.lifelong-calendar-links {
+  margin-top: 1rem;
+}
+
+.lifelong-calendar-link-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.lifelong-calendar-link-raw {
+  word-break: break-word;
+}
+
+.lifelong-calendar-link-actions {
+  flex-shrink: 0;
+}
+
+.lifelong-calendar-detail-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.lifelong-calendar-empty {
+  color: var(--text-muted);
+}
+
+.lifelong-calendar-modal .setting-item {
+  border-top: 0;
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
+.lifelong-calendar-ask-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lifelong-calendar-ask-input {
+  width: 100%;
+  min-height: 7rem;
+}
+
+.lifelong-calendar-ask-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lifelong-calendar-ask-results {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  padding: 1rem;
+  background: var(--background-secondary);
+}
+
+.lifelong-calendar-ask-answer {
+  white-space: pre-wrap;
+}
+
+.lifelong-calendar-citations {
+  margin-top: 1rem;
+}
+
+.lifelong-calendar-citation-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: 0.35rem;
+}
+
+.lifelong-calendar-error {
+  color: var(--text-error);
+}
+
+@media (max-width: 900px) {
+  .lifelong-calendar-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .lifelong-calendar-toolbar-actions {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Lifelong Calendar icon</title>
+  <desc id="desc">A calendar card layered over a life timeline path.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8f3e8"/>
+      <stop offset="100%" stop-color="#d7e9df"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffaf1"/>
+      <stop offset="100%" stop-color="#f0e6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="52" fill="url(#bg)"/>
+  <path d="M38 181c22-30 45-46 70-46 20 0 32 9 46 18 12 8 23 14 39 14 12 0 22-4 32-11" fill="none" stroke="#355c4f" stroke-linecap="round" stroke-linejoin="round" stroke-width="14"/>
+  <circle cx="80" cy="141" r="10" fill="#bd5d38"/>
+  <circle cx="148" cy="153" r="10" fill="#bd5d38"/>
+  <circle cx="208" cy="156" r="10" fill="#bd5d38"/>
+  <rect x="54" y="44" width="148" height="118" rx="24" fill="url(#card)" stroke="#243831" stroke-width="8"/>
+  <path d="M54 82h148" fill="none" stroke="#243831" stroke-width="8"/>
+  <path d="M90 33v28M166 33v28" fill="none" stroke="#243831" stroke-linecap="round" stroke-width="12"/>
+  <rect x="79" y="98" width="26" height="22" rx="6" fill="#355c4f"/>
+  <rect x="115" y="98" width="26" height="22" rx="6" fill="#bd5d38"/>
+  <rect x="151" y="98" width="26" height="22" rx="6" fill="#355c4f"/>
+  <rect x="79" y="128" width="26" height="12" rx="6" fill="#d9c8a1"/>
+  <rect x="115" y="128" width="62" height="12" rx="6" fill="#d9c8a1"/>
+</svg>

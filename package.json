@@ -1,0 +1,24 @@
+{
+  "name": "lifelong-calendar",
+  "version": "0.1.0",
+  "description": "Build a date-based life timeline with Markdown entries, reminders, linked notes, and grounded AI chat.",
+  "main": "main.js",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --minify --outfile=main.js --format=cjs --platform=node --external:obsidian --target=es2020",
+    "check": "tsc --noEmit"
+  },
+  "keywords": [
+    "obsidian",
+    "plugin",
+    "calendar",
+    "timeline"
+  ],
+  "author": "Kushal Garg",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.25.0",
+    "obsidian": "^1.7.2",
+    "typescript": "^5.8.2"
+  }
+}
