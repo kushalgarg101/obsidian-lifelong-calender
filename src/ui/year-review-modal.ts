@@ -10,17 +10,51 @@ export class YearInReviewModal extends Modal {
   }
 
   async onOpen(): Promise<void> {
+    this.renderContent();
+  }
+
+  private renderContent(): void {
     const { contentEl } = this;
+    contentEl.empty();
     contentEl.addClass("lifelong-calendar-modal");
 
-    const review = this.plugin.indexer.getYearInReview(this.year);
+    const years = this.plugin.indexer.getYears();
+    const currentYear = new Date().getFullYear();
+    
+    if (!years.includes(currentYear.toString())) {
+      years.unshift(currentYear.toString());
+    }
+    if (!years.includes(this.year.toString())) {
+      years.unshift(this.year.toString());
+    }
+    years.sort((a, b) => b.localeCompare(a));
 
-    contentEl.createEl("h2", {
-      text: `${this.year} Year in Review`,
+    const header = contentEl.createDiv("lifelong-calendar-year-review-header");
+    
+    const titleRow = header.createDiv("lifelong-calendar-year-review-title-row");
+    titleRow.createEl("h2", {
+      text: "Year in Review",
       cls: "lifelong-calendar-year-review-title"
     });
 
-    contentEl.createEl("p", {
+    const yearSelect = titleRow.createEl("select", {
+      cls: "lifelong-calendar-year-select"
+    });
+    for (const y of years) {
+      const option = yearSelect.createEl("option", {
+        text: y,
+        value: y
+      });
+      option.selected = y === this.year.toString();
+    }
+    yearSelect.addEventListener("change", () => {
+      this.year = parseInt(yearSelect.value);
+      this.renderContent();
+    });
+
+    const review = this.plugin.indexer.getYearInReview(this.year);
+
+    const subtitle = header.createEl("p", {
       text: `${review.totalEntries} memories logged`,
       cls: "lifelong-calendar-year-review-subtitle"
     });

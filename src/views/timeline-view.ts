@@ -239,9 +239,10 @@ export class TimelineView extends ItemView {
     const months = [...entriesMap.keys()].sort().reverse().slice(0, 12);
 
     if (!months.length) {
+      const hasActiveFilters = this.filter.query || this.filter.type || this.filter.year || this.filter.showFavoritesOnly;
       listPane.createEl("div", {
         cls: "lifelong-calendar-empty",
-        text: "No timeline entries yet."
+        text: hasActiveFilters ? "No entries match your filters." : "No timeline entries yet."
       });
       return;
     }
@@ -373,7 +374,7 @@ export class TimelineView extends ItemView {
     const legend = heatmapSection.createDiv("lifelong-calendar-heatmap-legend");
     legend.createEl("span", { text: "Less", cls: "lifelong-calendar-heatmap-legend-label" });
     for (let i = 0; i <= 4; i++) {
-      const legendCell = legend.createEl("div", { cls: `lifelong-calendar-heatmap-cell level-${i}` });
+      const legendCell = legend.createEl("div", { cls: `lifelong-calendar-heatmap-cell level-${i} ${i > 0 ? 'has-entries' : ''}` });
     }
     legend.createEl("span", { text: "More", cls: "lifelong-calendar-heatmap-legend-label" });
   }
