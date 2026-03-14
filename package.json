@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "build": "esbuild src/main.ts --bundle --minify --outfile=main.js --format=cjs --platform=node --external:obsidian --target=es2020",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "setup-reminder": "node scripts/setup-reminder.js"
   },
   "keywords": [
     "obsidian",
