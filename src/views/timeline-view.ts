@@ -174,7 +174,7 @@ export class TimelineView extends ItemView {
     this.selectedEntryId = selectedEntry?.id ?? null;
 
     if (this.filter.viewMode === "calendar") {
-      this.renderCalendarView(listPane, filtered, grouped);
+      this.renderCalendarView(listPane, filtered);
     } else if (this.filter.viewMode === "heatmap") {
       this.renderHeatmapView(listPane, filtered);
     } else {
@@ -226,10 +226,9 @@ export class TimelineView extends ItemView {
     }
   }
 
-  private renderCalendarView(listPane: HTMLElement, filtered: ReturnType<typeof this.plugin.indexer.getAll>, grouped: ReturnType<typeof groupEntries>): void {
-    const allEntries = this.plugin.indexer.getAll();
-    const entriesMap = new Map<string, typeof allEntries[number][]>();
-    for (const entry of allEntries) {
+  private renderCalendarView(listPane: HTMLElement, filtered: ReturnType<typeof this.plugin.indexer.getAll>): void {
+    const entriesMap = new Map<string, typeof filtered[number][]>();
+    for (const entry of filtered) {
       const monthKey = entry.date.substring(0, 7);
       if (!entriesMap.has(monthKey)) {
         entriesMap.set(monthKey, []);
@@ -297,10 +296,8 @@ export class TimelineView extends ItemView {
   }
 
   private renderHeatmapView(listPane: HTMLElement, filtered: ReturnType<typeof this.plugin.indexer.getAll>): void {
-    const allEntries = this.plugin.indexer.getAll();
-    
     const entriesByDate = new Map<string, number>();
-    for (const entry of allEntries) {
+    for (const entry of filtered) {
       const count = entriesByDate.get(entry.date) || 0;
       entriesByDate.set(entry.date, count + 1);
     }
@@ -363,7 +360,7 @@ export class TimelineView extends ItemView {
           }
           cell.setAttribute("title", `${dateStr}: ${count} entries`);
           cell.addEventListener("click", () => {
-            const entries = allEntries.filter(e => e.date === dateStr);
+            const entries = filtered.filter(e => e.date === dateStr);
             if (entries.length > 0) {
               this.selectedEntryId = entries[0].id;
               this.render();

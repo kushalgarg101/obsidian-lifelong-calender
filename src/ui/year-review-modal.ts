@@ -25,6 +25,15 @@ export class YearInReviewModal extends Modal {
       cls: "lifelong-calendar-year-review-subtitle"
     });
 
+    if (review.totalEntries === 0) {
+      contentEl.createEl("p", {
+        text: `No entries found for ${this.year}. Start logging your memories!`,
+        cls: "lifelong-calendar-empty"
+      });
+      this.createCloseButton(contentEl);
+      return;
+    }
+
     const statsGrid = contentEl.createDiv("lifelong-calendar-stats-grid");
 
     const totalCard = statsGrid.createDiv("lifelong-calendar-stat-card");
