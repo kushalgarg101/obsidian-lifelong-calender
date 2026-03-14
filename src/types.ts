@@ -2,6 +2,7 @@ export const LIFELONG_CALENDAR_VIEW = "lifelong-calendar-view";
 
 export type TimelineLinkKind = "internal" | "external";
 export type ChatProviderId = "openai" | "groq" | "gemini" | "ollama" | "custom";
+export type ViewMode = "list" | "calendar" | "heatmap";
 
 export interface TimelineEntryLink {
   kind: TimelineLinkKind;
@@ -20,6 +21,7 @@ export interface TimelineEntry {
   filePath: string;
   createdAt: string;
   updatedAt: string;
+  favorite: boolean;
   extraFrontmatter: Record<string, unknown>;
 }
 
@@ -29,18 +31,22 @@ export interface TimelineEntryInput {
   type?: string;
   links: string[];
   note: string;
+  favorite?: boolean;
 }
 
 export interface TimelineFilter {
   query: string;
   type: string;
   year: string;
+  viewMode: ViewMode;
+  showFavoritesOnly: boolean;
 }
 
 export interface TimelineSettings {
   entriesFolder: string;
   defaultCategories: string[];
   openInternalInNewLeaf: boolean;
+  viewMode: ViewMode;
   backendUrl: string;
   backendToken: string;
   reminderEmail: string;
@@ -108,4 +114,26 @@ export interface Citation {
 export interface ChatAnswer {
   answer: string;
   citations: Citation[];
+}
+
+export interface TimelineStats {
+  totalEntries: number;
+  entriesThisMonth: number;
+  entriesThisYear: number;
+  currentStreak: number;
+  longestStreak: number;
+  topCategories: { type: string; count: number }[];
+  entriesPerMonth: { month: string; count: number }[];
+  firstEntryDate: string | null;
+  lastEntryDate: string | null;
+}
+
+export interface YearInReview {
+  year: number;
+  totalEntries: number;
+  topCategories: { type: string; count: number }[];
+  mostActiveMonth: { month: string; count: number } | null;
+  firstEntry: TimelineEntry | null;
+  lastEntry: TimelineEntry | null;
+  entriesByMonth: { month: string; count: number }[];
 }

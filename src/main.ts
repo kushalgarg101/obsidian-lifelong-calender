@@ -5,7 +5,8 @@ import {
   Plugin,
   TAbstractFile,
   TFile,
-  WorkspaceLeaf
+  WorkspaceLeaf,
+  ItemView
 } from "obsidian";
 import { EntryRepository } from "./data/entry-repository";
 import { EntryIndexer } from "./data/indexer";
@@ -110,6 +111,36 @@ export default class LifelongCalendarPlugin extends Plugin {
       name: "Send Test Reminder Email",
       callback: async () => {
         await this.sendTestReminder();
+      }
+    });
+
+    this.addCommand({
+      id: "show-on-this-day",
+      name: "On This Day",
+      callback: async () => {
+        this.openOnThisDayModal();
+      }
+    });
+
+    this.addCommand({
+      id: "show-year-in-review",
+      name: "Year in Review",
+      callback: async () => {
+        this.openYearInReviewModal();
+      }
+    });
+
+    this.addCommand({
+      id: "toggle-entry-favorite",
+      name: "Toggle Favorite",
+      callback: async () => {
+        const leaves = this.app.workspace.getLeavesOfType(LIFELONG_CALENDAR_VIEW);
+        for (const leaf of leaves) {
+          if (leaf.view instanceof TimelineView) {
+            await leaf.view.toggleSelectedFavorite();
+            break;
+          }
+        }
       }
     });
 
@@ -259,6 +290,16 @@ export default class LifelongCalendarPlugin extends Plugin {
 
   openAskModal(): void {
     new AskCalendarModal(this).open();
+  }
+
+  openOnThisDayModal(): void {
+    const { OnThisDayModal } = require("./ui/on-this-day-modal");
+    new OnThisDayModal(this).open();
+  }
+
+  openYearInReviewModal(year?: number): void {
+    const { YearInReviewModal } = require("./ui/year-review-modal");
+    new YearInReviewModal(this, year).open();
   }
 
   private async maybeRefreshTimeline(file: TAbstractFile): Promise<void> {

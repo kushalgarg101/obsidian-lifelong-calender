@@ -26,9 +26,29 @@ export class DetailPane {
       cls: "lifelong-calendar-detail-date",
       text: formatDateLabel(entry.date)
     });
-    this.containerEl.createEl("h3", {
+    
+    const titleRow = this.containerEl.createDiv("lifelong-calendar-detail-title-row");
+    const titleEl = titleRow.createEl("h3", {
       cls: "lifelong-calendar-detail-title",
       text: entry.title
+    });
+    
+    const favoriteBtn = titleRow.createEl("button", {
+      text: entry.favorite ? "★" : "☆",
+      cls: "lifelong-calendar-favorite-btn" + (entry.favorite ? " is-favorite" : "")
+    });
+    favoriteBtn.title = entry.favorite ? "Remove from favorites" : "Add to favorites";
+    favoriteBtn.addEventListener("click", async () => {
+      await this.plugin.repository.updateEntry(entry, {
+        date: entry.date,
+        title: entry.title,
+        type: entry.type,
+        links: entry.links.map(l => l.raw),
+        note: entry.note,
+        favorite: !entry.favorite
+      });
+      await this.plugin.refreshTimeline();
+      this.render(this.plugin.indexer.getById(entry.id));
     });
 
     if (entry.type) {
