@@ -29,7 +29,9 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
     containerEl.empty();
     let pendingEntriesFolder = this.plugin.settings.entriesFolder;
 
-    containerEl.createEl("h2", { text: "Lifelong Calendar" });
+    new Setting(containerEl)
+      .setName("Lifelong Calendar")
+      .setHeading();
     this.renderHelpSection(containerEl);
 
     new Setting(containerEl)
@@ -83,7 +85,9 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: "Reminder Cloud" });
+    new Setting(containerEl)
+      .setName("Reminder cloud")
+      .setHeading();
 
     new Setting(containerEl)
       .setName("Backend URL")
@@ -181,7 +185,9 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
         })
       );
 
-    containerEl.createEl("h3", { text: "AI Chat" });
+    new Setting(containerEl)
+      .setName("AI chat")
+      .setHeading();
 
     new Setting(containerEl)
       .setName("Provider")
@@ -255,7 +261,9 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
   }
 
   private renderHelpSection(containerEl: HTMLElement): void {
-    containerEl.createEl("h3", { text: "Help" });
+    new Setting(containerEl)
+      .setName("Help")
+      .setHeading();
     containerEl.createEl("p", {
       text: "Use this section as a quick setup guide. The full project guide is in README.md, but the essentials are summarized here."
     });
@@ -295,7 +303,9 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
   }
 
   private renderHelpBlock(containerEl: HTMLElement, title: string, items: string[]): void {
-    containerEl.createEl("h4", { text: title });
+    new Setting(containerEl)
+      .setName(title)
+      .setHeading();
     const listEl = containerEl.createEl("ul");
     for (const item of items) {
       listEl.createEl("li", { text: item });

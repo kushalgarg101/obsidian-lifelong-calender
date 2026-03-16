@@ -14,7 +14,7 @@ export class AskCalendarModal extends Modal {
 
   onOpen(): void {
     const { contentEl, titleEl } = this;
-    titleEl.setText("Ask Lifelong Calendar");
+    titleEl.setText("Ask");
     contentEl.empty();
     contentEl.addClass("lifelong-calendar-ask-modal");
 

@@ -32,7 +32,7 @@ export class RetrievalService {
       chunks.push(entryToChunk(entry));
     }
 
-    const linkedNotes = await this.collectLinkedNotes(entries);
+    const linkedNotes = this.collectLinkedNotes(entries);
     for (const noteFile of linkedNotes) {
       const content = await this.plugin.app.vault.cachedRead(noteFile);
       const plain = toPlainText(content);
@@ -49,7 +49,7 @@ export class RetrievalService {
     return chunks;
   }
 
-  private async collectLinkedNotes(entries: TimelineEntry[]): Promise<TFile[]> {
+  private collectLinkedNotes(entries: TimelineEntry[]): TFile[] {
     const files = new Map<string, TFile>();
 
     for (const entry of entries) {

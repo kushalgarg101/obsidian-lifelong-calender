@@ -38,78 +38,78 @@ export default class LifelongCalendarPlugin extends Plugin {
     this.addSettingTab(new LifelongCalendarSettingTab(this));
 
     this.addCommand({
-      id: "open-lifelong-calendar",
-      name: "Open Lifelong Calendar",
-      callback: async () => {
-        await this.activateView();
+      id: "open",
+      name: "Open",
+      callback: () => {
+        void this.activateView();
       }
     });
 
     this.addCommand({
-      id: "add-timeline-entry",
-      name: "Add Timeline Entry",
-      callback: async () => {
-        await this.openEntryModal();
+      id: "add-entry",
+      name: "Add entry",
+      callback: () => {
+        void this.openEntryModal();
       }
     });
 
     this.addCommand({
-      id: "add-current-note-to-timeline",
-      name: "Add Current Note to Timeline",
-      callback: async () => {
+      id: "add-current-note",
+      name: "Add current note to timeline",
+      callback: () => {
         const activeFile = this.app.workspace.getActiveViewOfType(MarkdownView)?.file;
         if (!activeFile) {
           new Notice("Open a note first.");
           return;
         }
 
-        await this.openEntryModal(undefined, `[[${activeFile.path}]]`, activeFile.basename);
+        void this.openEntryModal(undefined, `[[${activeFile.path}]]`, activeFile.basename);
       }
     });
 
     this.addCommand({
-      id: "add-external-link-to-timeline",
-      name: "Add External Link to Timeline",
-      callback: async () => {
-        await this.openEntryModal();
+      id: "add-link",
+      name: "Add external link to timeline",
+      callback: () => {
+        void this.openEntryModal();
       }
     });
 
     this.addCommand({
-      id: "open-random-memory",
-      name: "Open Random Memory",
-      callback: async () => {
+      id: "random",
+      name: "Open random memory",
+      callback: () => {
         const entry = this.indexer.getRandomEntry();
         if (!entry) {
           new Notice("No timeline entries found.");
           return;
         }
 
-        await this.activateView(entry.id);
+        void this.activateView(entry.id);
       }
     });
 
     this.addCommand({
-      id: "ask-lifelong-calendar",
-      name: "Ask Lifelong Calendar",
-      callback: async () => {
+      id: "ask",
+      name: "Ask",
+      callback: () => {
         this.openAskModal();
       }
     });
 
     this.addCommand({
-      id: "sync-today-reminder-status",
-      name: "Sync Today's Reminder Status",
-      callback: async () => {
-        await this.syncTodayCompletionStatus("obsidian");
+      id: "sync-status",
+      name: "Sync today's reminder status",
+      callback: () => {
+        void this.syncTodayCompletionStatus("obsidian");
       }
     });
 
     this.addCommand({
-      id: "send-test-reminder-email",
-      name: "Send Test Reminder Email",
-      callback: async () => {
-        await this.sendTestReminder();
+      id: "test-email",
+      name: "Send test reminder email",
+      callback: () => {
+        void this.sendTestReminder();
       }
     });
 

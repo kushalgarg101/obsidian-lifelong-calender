@@ -192,7 +192,7 @@ export class EntryRepository {
     return `---\n${yaml}\n---\n${body ? `\n${body}\n` : ""}`;
   }
 
-  private async generateUniqueFilePath(date: string, title: string, currentPath?: string): Promise<string> {
+  private generateUniqueFilePath(date: string, title: string, currentPath?: string): string {
     const baseFolder = normalizePath(this.plugin.settings.entriesFolder);
     const slug = toSlug(title);
     let suffix = "";

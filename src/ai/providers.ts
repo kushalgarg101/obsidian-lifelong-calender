@@ -1,4 +1,5 @@
 import type { ChatAnswer, Citation, SourceChunk, TimelineSettings } from "../types";
+import { requestUrl } from "obsidian";
 
 interface ProviderResult {
   answer: string;
@@ -51,7 +52,8 @@ async function askOpenAICompatible(
   chunks: SourceChunk[]
 ): Promise<ProviderResult> {
   const baseUrl = settings.aiBaseUrl || defaultBaseUrl(settings.aiProvider);
-  const response = await fetch(`${baseUrl}/chat/completions`, {
+  const response = await requestUrl({
+    url: `${baseUrl}/chat/completions`,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -67,11 +69,11 @@ async function askOpenAICompatible(
     })
   });
 
-  if (!response.ok) {
-    throw new Error(`AI provider error (${response.status}): ${await response.text()}`);
+  if (response.status >= 400) {
+    throw new Error(`AI provider error (${response.status}): ${response.text}`);
   }
 
-  const json = await response.json() as {
+  const json = response.json as {
     choices?: Array<{ message?: { content?: string } }>;
   };
   const content = json.choices?.[0]?.message?.content ?? "";
@@ -84,33 +86,31 @@ async function askGemini(
   chunks: SourceChunk[]
 ): Promise<ProviderResult> {
   const baseUrl = settings.aiBaseUrl || "https://generativelanguage.googleapis.com/v1beta";
-  const response = await fetch(
-    `${baseUrl}/models/${settings.aiModel}:generateContent?key=${encodeURIComponent(settings.aiApiKey)}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: buildPrompt(question, chunks)
-              }
-            ]
-          }
-        ]
-      })
-    }
-  );
+  const response = await requestUrl({
+    url: `${baseUrl}/models/${settings.aiModel}:generateContent?key=${encodeURIComponent(settings.aiApiKey)}`,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: buildPrompt(question, chunks)
+            }
+          ]
+        }
+      ]
+    })
+  });
 
-  if (!response.ok) {
-    throw new Error(`Gemini error (${response.status}): ${await response.text()}`);
+  if (response.status >= 400) {
+    throw new Error(`Gemini error (${response.status}): ${response.text}`);
   }
 
-  const json = await response.json() as {
+  const json = response.json as {
     candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
   };
   const content = json.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
@@ -123,7 +123,8 @@ async function askOllama(
   chunks: SourceChunk[]
 ): Promise<ProviderResult> {
   const baseUrl = settings.aiBaseUrl || "http://localhost:11434";
-  const response = await fetch(`${baseUrl}/api/generate`, {
+  const response = await requestUrl({
+    url: `${baseUrl}/api/generate`,
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -135,11 +136,11 @@ async function askOllama(
     })
   });
 
-  if (!response.ok) {
-    throw new Error(`Ollama error (${response.status}): ${await response.text()}`);
+  if (response.status >= 400) {
+    throw new Error(`Ollama error (${response.status}): ${response.text}`);
   }
 
-  const json = await response.json() as { response?: string };
+  const json = response.json as { response?: string };
   return parseModelResult(json.response ?? "", chunks);
 }
 
