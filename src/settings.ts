@@ -267,7 +267,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
     });
 
     this.renderHelpBlock(containerEl, "Quick Start", [
-      "Open the command palette and run Open Lifelong Calendar.",
+      "Open the command palette and run Open.",
       "Create entries with Add Timeline Entry or Add Current Note to Timeline.",
       "Each entry is stored as one Markdown file in your entries folder.",
       "A day counts as complete for reminders if at least one entry exists for that date."
