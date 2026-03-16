@@ -63,11 +63,12 @@ export class DetailPane {
       });
       const actions = row.createDiv("lifelong-calendar-link-actions");
       const openButton = actions.createEl("button", { text: "Open" });
-      openButton.addEventListener("click", async () => {
-        const opened = await this.plugin.openTimelineLink(link, entry.filePath);
-        if (!opened) {
-          new Notice(`Could not open ${link.raw}`);
-        }
+      openButton.addEventListener("click", () => {
+        void this.plugin.openTimelineLink(link, entry.filePath).then((opened: boolean) => {
+          if (!opened) {
+            new Notice(`Could not open ${link.raw}`);
+          }
+        });
       });
     }
 
@@ -76,8 +77,8 @@ export class DetailPane {
     editButton.addEventListener("click", () => this.onEdit(entry));
 
     const fileButton = actionRow.createEl("button", { text: "Open entry file" });
-    fileButton.addEventListener("click", async () => {
-      await this.plugin.openFileInLeaf(entry.filePath);
+    fileButton.addEventListener("click", () => {
+      void this.plugin.openFileInLeaf(entry.filePath);
     });
   }
 }

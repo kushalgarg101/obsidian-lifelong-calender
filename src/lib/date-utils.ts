@@ -68,7 +68,7 @@ export function groupEntries(entries: TimelineEntry[]): GroupedYear[] {
       const months: GroupedMonth[] = [...monthMap.keys()]
         .sort((a, b) => b.localeCompare(a))
         .map((monthKey) => {
-          const [, month] = monthKey.split("-");
+          monthKey.split("-");
           const days = [...monthMap.get(monthKey)!.keys()]
             .sort((a, b) => b.localeCompare(a))
             .map((day) => ({

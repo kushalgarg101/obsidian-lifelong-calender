@@ -42,7 +42,7 @@ export class EntryModal extends Modal {
     new Setting(contentEl)
       .setName("Date")
       .addText((text) =>
-        text.setPlaceholder("YYYY-MM-DD").setValue(this.dateValue).onChange((value) => {
+        text.setPlaceholder("Yyyy-mm-dd").setValue(this.dateValue).onChange((value) => {
           this.dateValue = value.trim();
         })
       );
@@ -59,7 +59,7 @@ export class EntryModal extends Modal {
       .setName("Category")
       .setDesc(this.options.categories.length ? `Suggestions: ${this.options.categories.join(", ")}` : "")
       .addText((text) =>
-        text.setPlaceholder("reading").setValue(this.typeValue).onChange((value) => {
+        text.setPlaceholder("Reading").setValue(this.typeValue).onChange((value) => {
           this.typeValue = value.trim();
         })
       );
@@ -109,7 +109,7 @@ export class EntryModal extends Modal {
       .filter(Boolean);
 
     if (!isValidIsoDate(this.dateValue)) {
-      new Notice("Use a real date in YYYY-MM-DD format.");
+      new Notice("Use a real date in yyyy-mm-dd format.");
       return null;
     }
 

@@ -39,10 +39,13 @@ async function generateWithProvider(
       return askOllama(settings, question, chunks);
     case "groq":
     case "openai":
-    case "custom":
+    case "custom": {
       return askOpenAICompatible(settings, question, chunks);
-    default:
-      throw new Error(`Unsupported provider: ${settings.aiProvider satisfies never}`);
+    }
+    default: {
+      const exhaustiveCheck: never = settings.aiProvider;
+      throw new Error(`Unsupported provider: ${exhaustiveCheck as string}`);
+    }
   }
 }
 

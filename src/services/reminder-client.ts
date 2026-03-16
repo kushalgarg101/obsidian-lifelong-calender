@@ -59,7 +59,7 @@ export class ReminderClient {
         Authorization: `Bearer ${this.plugin.settings.backendToken}`
       },
       body: JSON.stringify(body)
-    });
+    }) as { status: number; json?: { error?: unknown }; text: string };
 
     if (response.status >= 400) {
       const message = typeof response.json?.error === "string"

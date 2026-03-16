@@ -27,7 +27,7 @@ export class TimelineView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Lifelong Calendar";
+    return "Lifelong calendar";
   }
 
   getIcon(): string {

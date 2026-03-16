@@ -121,14 +121,14 @@ export default class LifelongCalendarPlugin extends Plugin {
     void this.syncTodayCompletionStatus("obsidian");
   }
 
-  async onunload(): Promise<void> {
-    await this.app.workspace.detachLeavesOfType(LIFELONG_CALENDAR_VIEW);
+  onunload(): void {
   }
 
   async loadSettings(): Promise<void> {
+    const loaded = await this.loadData() as Partial<TimelineSettings>;
     this.settings = {
       ...DEFAULT_SETTINGS,
-      ...(await this.loadData())
+      ...loaded
     };
     this.settings.entriesFolder = normalizePath(this.settings.entriesFolder || DEFAULT_SETTINGS.entriesFolder);
   }
@@ -155,7 +155,7 @@ export default class LifelongCalendarPlugin extends Plugin {
     if (!leaf) {
       leaf = this.app.workspace.getRightLeaf(false);
       if (!leaf) {
-        new Notice("Could not create a Lifelong Calendar pane.");
+        new Notice("Could not create a lifelong calendar pane.");
         return;
       }
       await leaf.setViewState({
@@ -164,7 +164,7 @@ export default class LifelongCalendarPlugin extends Plugin {
       });
     }
 
-    this.app.workspace.revealLeaf(leaf);
+    void this.app.workspace.revealLeaf(leaf);
     if (leaf.view instanceof TimelineView) {
       leaf.view.setSelectedEntry(selectedEntryId ?? null);
       leaf.view.refresh();

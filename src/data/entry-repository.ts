@@ -61,7 +61,7 @@ export class EntryRepository {
     await this.ensureEntriesFolder();
     const now = new Date().toISOString();
     const entryId = crypto.randomUUID();
-    const filePath = await this.generateUniqueFilePath(input.date, input.title);
+    const filePath = this.generateUniqueFilePath(input.date, input.title);
     const content = this.serializeEntry({
       id: entryId,
       date: input.date,
@@ -86,7 +86,7 @@ export class EntryRepository {
   }
 
   async updateEntry(existing: TimelineEntry, input: TimelineEntryInput): Promise<TimelineEntry> {
-    const nextPath = await this.generateUniqueFilePath(input.date, input.title, existing.filePath);
+    const nextPath = this.generateUniqueFilePath(input.date, input.title, existing.filePath);
     const content = this.serializeEntry({
       ...existing,
       title: input.title,
@@ -230,7 +230,7 @@ function splitFrontmatter(content: string): FrontmatterSplitResult {
     return { frontmatter: {}, body: content };
   }
 
-  const parsed = parseYaml(match[1]);
+  const parsed = parseYaml(match[1]) as Record<string, unknown> | undefined;
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
     return { frontmatter: {}, body: match[2] ?? "" };
   }

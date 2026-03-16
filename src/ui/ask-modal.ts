@@ -31,40 +31,41 @@ export class AskCalendarModal extends Modal {
     });
     const resultsEl = contentEl.createDiv("lifelong-calendar-ask-results");
 
-    askButton.addEventListener("click", async () => {
-      const question = input.value.trim();
-      if (!question) {
-        new Notice("Enter a question first.");
+    askButton.addEventListener("click", () => {
+      void this.onAskClick(input, askButton, resultsEl);
+    });
+  }
+
+  private async onAskClick(input: HTMLTextAreaElement, askButton: HTMLButtonElement, resultsEl: HTMLElement): Promise<void> {
+    const question = input.value.trim();
+    if (!question) {
+      new Notice("Enter a question first.");
+      return;
+    }
+
+    askButton.disabled = true;
+    resultsEl.empty();
+    resultsEl.createEl("div", { text: "Searching your timeline..." });
+
+    try {
+      const chunks = await this.retrievalService.search(question, this.plugin.settings.aiMaxRetrievedChunks);
+      if (!chunks.length) {
+        resultsEl.createEl("div", { text: "No relevant entries found." });
+        askButton.disabled = false;
         return;
       }
 
-      askButton.disabled = true;
+      const answer = await askProvider(this.plugin.settings, question, chunks);
+      this.renderAnswer(resultsEl, answer.answer, answer.citations);
+    } catch (error) {
       resultsEl.empty();
-      resultsEl.createEl("div", { text: "Searching your timeline..." });
-
-      try {
-        const chunks = await this.retrievalService.search(question, this.plugin.settings.aiMaxRetrievedChunks);
-        if (!chunks.length) {
-          resultsEl.empty();
-          resultsEl.createEl("div", {
-            cls: "lifelong-calendar-empty",
-            text: "I couldn't find any relevant local sources."
-          });
-          return;
-        }
-
-        const answer = await askProvider(this.plugin.settings, question, chunks);
-        this.renderAnswer(resultsEl, answer.answer, answer.citations);
-      } catch (error) {
-        resultsEl.empty();
-        resultsEl.createEl("div", {
-          cls: "lifelong-calendar-error",
-          text: error instanceof Error ? error.message : "Unknown AI error."
-        });
-      } finally {
-        askButton.disabled = false;
-      }
-    });
+      resultsEl.createEl("div", {
+        cls: "lifelong-calendar-error",
+        text: error instanceof Error ? error.message : "Unknown AI error."
+      });
+    } finally {
+      askButton.disabled = false;
+    }
   }
 
   private renderAnswer(containerEl: HTMLElement, answer: string, citations: Citation[]): void {
@@ -91,8 +92,8 @@ export class AskCalendarModal extends Modal {
         text: citation.sourceDate ? `${citation.sourceTitle} (${citation.sourceDate})` : citation.sourceTitle
       });
       setTooltip(button, citation.excerpt || citation.sourceFilePath, { placement: "top" });
-      button.addEventListener("click", async () => {
-        await this.plugin.openFileInLeaf(citation.sourceFilePath);
+      button.addEventListener("click", () => {
+        void this.plugin.openFileInLeaf(citation.sourceFilePath);
       });
     }
   }

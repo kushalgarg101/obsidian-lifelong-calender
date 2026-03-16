@@ -29,17 +29,15 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
     containerEl.empty();
     let pendingEntriesFolder = this.plugin.settings.entriesFolder;
 
-    new Setting(containerEl)
-      .setName("Lifelong Calendar")
-      .setHeading();
+    ;
     this.renderHelpSection(containerEl);
 
     new Setting(containerEl)
       .setName("Entries folder")
-      .setDesc("Folder used for timeline entry markdown files. Click apply after editing.")
+      .setDesc("Folder used for timeline entry Markdown files. Click apply after editing.")
       .addText((text) =>
         text
-          .setPlaceholder("Lifelong Calendar/Entries")
+          .setPlaceholder("Lifelong calendar/entries")
           .setValue(this.plugin.settings.entriesFolder)
           .onChange((value) => {
             pendingEntriesFolder = normalizePath(value.trim() || DEFAULT_SETTINGS.entriesFolder);
@@ -107,7 +105,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setDesc("Shared bearer token used by the plugin when talking to the reminder backend.")
       .addText((text) =>
         text
-          .setPlaceholder("secret-token")
+          .setPlaceholder("Secret-token")
           .setValue(this.plugin.settings.backendToken)
           .onChange(async (value) => {
             this.plugin.settings.backendToken = value.trim();
@@ -120,7 +118,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setDesc("Email address that receives the daily reminder.")
       .addText((text) =>
         text
-          .setPlaceholder("you@example.com")
+          .setPlaceholder("You@example.com")
           .setValue(this.plugin.settings.reminderEmail)
           .onChange(async (value) => {
             this.plugin.settings.reminderEmail = value.trim();
@@ -130,10 +128,10 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Reminder timezone")
-      .setDesc("IANA timezone used for deciding whether today is complete.")
+      .setDesc("Iana timezone used for deciding whether today is complete.")
       .addText((text) =>
         text
-          .setPlaceholder("Asia/Kolkata")
+          .setPlaceholder("Asia/kolkata")
           .setValue(this.plugin.settings.reminderTimezone)
           .onChange(async (value) => {
             this.plugin.settings.reminderTimezone = value.trim() || DEFAULT_SETTINGS.reminderTimezone;
@@ -143,7 +141,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Reminder time")
-      .setDesc("Daily local reminder time in HH:MM 24-hour format.")
+      .setDesc("Daily local reminder time in hh:mm 24-hour format.")
       .addText((text) =>
         text
           .setPlaceholder("20:00")
@@ -191,14 +189,14 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Provider")
-      .setDesc("Cloud or local LLM provider used by Ask Lifelong Calendar.")
+      .setDesc("Cloud or local llm provider used by ask lifelong calendar.")
       .addDropdown((dropdown) => {
         dropdown
           .addOption("openai", "OpenAI")
           .addOption("groq", "Groq")
           .addOption("gemini", "Gemini")
           .addOption("ollama", "Ollama")
-          .addOption("custom", "Custom OpenAI-compatible")
+          .addOption("custom", "Custom openai-compatible")
           .setValue(this.plugin.settings.aiProvider)
           .onChange(async (value) => {
             this.plugin.settings.aiProvider = value as TimelineSettings["aiProvider"];
@@ -208,10 +206,10 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("API key")
-      .setDesc("Required for cloud providers. Leave blank for local Ollama if not needed.")
+      .setDesc("Required for cloud providers. Leave blank for local ollama if not needed.")
       .addText((text) =>
         text
-          .setPlaceholder("api-key")
+          .setPlaceholder("Api-key")
           .setValue(this.plugin.settings.aiApiKey)
           .onChange(async (value) => {
             this.plugin.settings.aiApiKey = value.trim();
@@ -221,10 +219,10 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Base URL")
-      .setDesc("Optional override. Use for Ollama or a custom OpenAI-compatible endpoint.")
+      .setDesc("Optional override. Use for ollama or a custom openai-compatible endpoint.")
       .addText((text) =>
         text
-          .setPlaceholder("http://localhost:11434")
+          .setPlaceholder("HTTP://localhost:11434")
           .setValue(this.plugin.settings.aiBaseUrl)
           .onChange(async (value) => {
             this.plugin.settings.aiBaseUrl = value.trim().replace(/\/+$/, "");
@@ -237,7 +235,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setDesc("Chat model used for grounded answers.")
       .addText((text) =>
         text
-          .setPlaceholder("gpt-4.1-mini")
+          .setPlaceholder("Gpt-4.1-mini")
           .setValue(this.plugin.settings.aiModel)
           .onChange(async (value) => {
             this.plugin.settings.aiModel = value.trim();
