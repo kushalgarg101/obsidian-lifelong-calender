@@ -171,7 +171,7 @@ export default class LifelongCalendarPlugin extends Plugin {
     }
   }
 
-  async openEntryModal(entry?: TimelineEntry, presetLink?: string, presetTitle?: string): Promise<void> {
+  openEntryModal(entry?: TimelineEntry, presetLink?: string, presetTitle?: string): void {
     const modal = new EntryModal({
       app: this.app,
       entry,

@@ -38,6 +38,7 @@ export class TimelineView extends ItemView {
     this.contentEl.empty();
     this.contentEl.addClass("lifelong-calendar-view");
     this.render();
+    await Promise.resolve();
   }
 
   refresh(): void {
