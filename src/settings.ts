@@ -88,8 +88,8 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setHeading();
 
     new Setting(containerEl)
-      .setName("Backend URL")
-      .setDesc("Base URL for the reminder worker.")
+      .setName("Backend url")
+      .setDesc("Base url for the reminder worker.")
       .addText((text) =>
         text
           .setPlaceholder("https://your-worker.example.workers.dev")
@@ -184,7 +184,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("AI chat")
+      .setName("Ai chat")
       .setHeading();
 
     new Setting(containerEl)
@@ -192,11 +192,11 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setDesc("Cloud or local llm provider used by ask lifelong calendar.")
       .addDropdown((dropdown) => {
         dropdown
-          .addOption("openai", "OpenAI")
-          .addOption("groq", "Groq")
-          .addOption("gemini", "Gemini")
-          .addOption("ollama", "Ollama")
-          .addOption("custom", "Custom openai-compatible")
+          .addOption("openai", "OPENAI")
+          .addOption("groq", "GROQ")
+          .addOption("gemini", "GEMINI")
+          .addOption("ollama", "OLLAMA")
+          .addOption("custom", "Custom OPENAI-compatible")
           .setValue(this.plugin.settings.aiProvider)
           .onChange(async (value) => {
             this.plugin.settings.aiProvider = value as TimelineSettings["aiProvider"];
@@ -205,8 +205,8 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("API key")
-      .setDesc("Required for cloud providers. Leave blank for local ollama if not needed.")
+      .setName("Api key")
+      .setDesc("Required for cloud providers. Leave blank for local OLLAMA if not needed.")
       .addText((text) =>
         text
           .setPlaceholder("Api-key")
@@ -218,11 +218,11 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Base URL")
-      .setDesc("Optional override. Use for ollama or a custom openai-compatible endpoint.")
+      .setName("Base url")
+      .setDesc("Optional override. Use for OLLAMA or a custom OPENAI-compatible endpoint.")
       .addText((text) =>
         text
-          .setPlaceholder("HTTP://localhost:11434")
+          .setPlaceholder("Http://localhost:11434")
           .setValue(this.plugin.settings.aiBaseUrl)
           .onChange(async (value) => {
             this.plugin.settings.aiBaseUrl = value.trim().replace(/\/+$/, "");
