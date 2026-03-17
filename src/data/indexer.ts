@@ -145,7 +145,7 @@ export class EntryIndexer {
       for (let i = 1; i < uniqueDates.length; i++) {
         const prevDate = new Date(uniqueDates[i - 1]);
         const currDate = new Date(uniqueDates[i]);
-        const diffDays = Math.floor((prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24));
+        const diffDays = Math.round((prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24));
         if (diffDays === 1) {
           currentStreak++;
         } else {
@@ -157,7 +157,7 @@ export class EntryIndexer {
     for (let i = 1; i < uniqueDates.length; i++) {
       const prevDate = new Date(uniqueDates[i - 1]);
       const currDate = new Date(uniqueDates[i]);
-      const diffDays = Math.floor((prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24));
+      const diffDays = Math.round((prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24));
       if (diffDays === 1) {
         tempStreak++;
       } else {

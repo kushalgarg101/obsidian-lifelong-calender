@@ -18,6 +18,8 @@ import type { ReminderStatusPayload, TimelineEntry, TimelineEntryInput, Timeline
 import { LIFELONG_CALENDAR_VIEW } from "./types";
 import { AskCalendarModal } from "./ui/ask-modal";
 import { EntryModal } from "./ui/entry-modal";
+import { OnThisDayModal } from "./ui/on-this-day-modal";
+import { YearInReviewModal } from "./ui/year-review-modal";
 import { TimelineView } from "./views/timeline-view";
 
 export default class LifelongCalendarPlugin extends Plugin {
@@ -293,12 +295,10 @@ export default class LifelongCalendarPlugin extends Plugin {
   }
 
   openOnThisDayModal(): void {
-    const { OnThisDayModal } = require("./ui/on-this-day-modal");
     new OnThisDayModal(this).open();
   }
 
   openYearInReviewModal(year?: number): void {
-    const { YearInReviewModal } = require("./ui/year-review-modal");
     new YearInReviewModal(this, year).open();
   }
 
