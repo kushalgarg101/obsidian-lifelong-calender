@@ -18,7 +18,7 @@ export default defineConfig([
       }
     },
     rules: {
-      "obsidianmd/ui/sentence-case": ["warn", { allowAutoFix: true, acronyms: ["OpenAI", "Groq", "Gemini", "Ollama"] }],
+      "obsidianmd/ui/sentence-case": ["off"],
     },
   },
 ]);

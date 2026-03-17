@@ -37,7 +37,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setDesc("Folder used for timeline entry Markdown files. Click apply after editing.")
       .addText((text) =>
         text
-          .setPlaceholder("Lifelong calendar/entries")
+          .setPlaceholder("Lifelong Calendar/Entries")
           .setValue(this.plugin.settings.entriesFolder)
           .onChange((value) => {
             pendingEntriesFolder = normalizePath(value.trim() || DEFAULT_SETTINGS.entriesFolder);
@@ -88,8 +88,8 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setHeading();
 
     new Setting(containerEl)
-      .setName("Backend url")
-      .setDesc("Base url for the reminder worker.")
+      .setName("Backend URL")
+      .setDesc("Base URL for the reminder worker.")
       .addText((text) =>
         text
           .setPlaceholder("https://your-worker.example.workers.dev")
@@ -184,19 +184,19 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Ai chat")
+      .setName("AI chat")
       .setHeading();
 
     new Setting(containerEl)
       .setName("Provider")
-      .setDesc("Cloud or local llm provider used by ask lifelong calendar.")
+      .setDesc("Cloud or local LLM provider used by Ask Lifelong Calendar.")
       .addDropdown((dropdown) => {
         dropdown
-          .addOption("openai", "OPENAI")
-          .addOption("groq", "GROQ")
-          .addOption("gemini", "GEMINI")
-          .addOption("ollama", "OLLAMA")
-          .addOption("custom", "Custom OPENAI-compatible")
+          .addOption("openai", "OpenAI")
+          .addOption("groq", "Groq")
+          .addOption("gemini", "Gemini")
+          .addOption("ollama", "Ollama")
+          .addOption("custom", "Custom OpenAI-compatible")
           .setValue(this.plugin.settings.aiProvider)
           .onChange(async (value) => {
             this.plugin.settings.aiProvider = value as TimelineSettings["aiProvider"];
@@ -205,11 +205,11 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("Api key")
-      .setDesc("Required for cloud providers. Leave blank for local OLLAMA if not needed.")
+      .setName("API key")
+      .setDesc("Required for cloud providers. Leave blank for local Ollama if not needed.")
       .addText((text) =>
         text
-          .setPlaceholder("Api-key")
+          .setPlaceholder("api-key")
           .setValue(this.plugin.settings.aiApiKey)
           .onChange(async (value) => {
             this.plugin.settings.aiApiKey = value.trim();
@@ -218,11 +218,11 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Base url")
-      .setDesc("Optional override. Use for OLLAMA or a custom OPENAI-compatible endpoint.")
+      .setName("Base URL")
+      .setDesc("Optional override. Use for Ollama or a custom OpenAI-compatible endpoint.")
       .addText((text) =>
         text
-          .setPlaceholder("Http://localhost:11434")
+          .setPlaceholder("http://localhost:11434")
           .setValue(this.plugin.settings.aiBaseUrl)
           .onChange(async (value) => {
             this.plugin.settings.aiBaseUrl = value.trim().replace(/\/+$/, "");
@@ -235,7 +235,7 @@ export class LifelongCalendarSettingTab extends PluginSettingTab {
       .setDesc("Chat model used for grounded answers.")
       .addText((text) =>
         text
-          .setPlaceholder("Gpt-4.1-mini")
+          .setPlaceholder("gpt-4.1-mini")
           .setValue(this.plugin.settings.aiModel)
           .onChange(async (value) => {
             this.plugin.settings.aiModel = value.trim();
