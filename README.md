@@ -234,263 +234,34 @@ Reminder behavior:
 - email links do not mutate reminder state on `GET`
 - the email check-in flow requires an explicit confirmation `POST`
 
-## Full Reminder Setup
+## Reminder Setup
 
-This section is written for first-time Cloudflare users and assumes you want to set up reminders for yourself.
+The reminder system is optional and sends daily emails when you haven't logged an entry.
 
-### 1. Prerequisites
+### Quick Setup (Recommended)
 
-You need:
+1. **Get a Resend API key** at [resend.com/api-keys](https://resend.com/api-keys)
+2. **Run the setup script:**
 
-- a Cloudflare account
-- a Resend account
-- your Obsidian plugin already installed locally
+   ```bash
+   npm run setup-reminder
+   ```
 
-For self-testing only:
+3. **Copy the Worker URL** shown at the end of the script
 
-- you may use `onboarding@resend.dev` as the sender address
-- your reminder recipient should be the same email address tied to your Resend account
+4. **Configure in Obsidian:**
+   - Settings → Lifelong Calendar → Reminder Cloud
+   - Set `Backend URL` to your Worker URL
+   - Set `Backend token` to the AUTH_TOKEN shown
+   - Set `Reminder email`, `Reminder timezone`, `Reminder time`
+   - Enable `Enable reminders`
+   - Click `Save config` → `Sync today` → `Test email`
 
-For sending real reminders more broadly later:
+See [backend/README.md](./backend/README.md) for detailed instructions.
 
-- you should verify your own domain in Resend
+### Manual Setup
 
-### 2. Create The D1 Database
-
-Open a terminal in the backend folder:
-
-```powershell
-cd D:\Opensource_repos\lifelong_calendar\backend
-```
-
-Log in to Cloudflare through Wrangler:
-
-```powershell
-npx wrangler@latest login
-```
-
-Create the D1 database:
-
-```powershell
-npx wrangler@latest d1 create lifelong-calendar
-```
-
-Cloudflare will print a `database_id`.
-
-When Wrangler asks whether it should automatically add the binding snippet, choose `n`.
-
-Reason:
-
-- this repo already expects the binding name to be `DB`
-- the Worker code uses `env.DB`
-
-### 3. Update `backend/wrangler.jsonc`
-
-Open [backend/wrangler.jsonc](./backend/wrangler.jsonc) and replace the placeholder values.
-
-Keep:
-
-- `"binding": "DB"`
-- `"database_name": "lifelong-calendar"`
-
-Replace:
-
-- `"database_id": "replace-me"` with your real D1 database ID
-- `"PUBLIC_BASE_URL": "https://replace-me.workers.dev"` later, after the first deploy
-
-Example structure:
-
-```jsonc
-{
-  "name": "lifelong-calendar-reminders",
-  "main": "worker.mjs",
-  "compatibility_date": "2026-03-06",
-  "triggers": {
-    "crons": ["*/30 * * * *"]
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "lifelong-calendar",
-      "database_id": "YOUR_REAL_DATABASE_ID"
-    }
-  ],
-  "vars": {
-    "PUBLIC_BASE_URL": "https://replace-me.workers.dev"
-  }
-}
-```
-
-### 4. Apply The Database Schema
-
-Run:
-
-```powershell
-npx wrangler@latest d1 execute lifelong-calendar --file .\schema.sql --remote
-```
-
-If Wrangler asks whether to proceed even though the database may be temporarily unavailable, choose `y`.
-
-This is expected when applying schema changes.
-
-### 5. Prepare The Required Secrets
-
-The Worker needs four secrets:
-
-- `AUTH_TOKEN`
-- `CHECKIN_SECRET`
-- `RESEND_API_KEY`
-- `RESEND_FROM_EMAIL`
-
-What they are:
-
-- `AUTH_TOKEN`: secret shared between the plugin and your Worker
-- `CHECKIN_SECRET`: secret used to sign reminder email check-in links
-- `RESEND_API_KEY`: API key from your Resend account
-- `RESEND_FROM_EMAIL`: sender email address used by Resend
-
-#### Generate `AUTH_TOKEN` and `CHECKIN_SECRET`
-
-Use PowerShell:
-
-```powershell
-"AUTH_TOKEN=" + [Convert]::ToBase64String((1..48 | ForEach-Object { Get-Random -Max 256 } | ForEach-Object { [byte]$_ }))
-"CHECKIN_SECRET=" + [Convert]::ToBase64String((1..48 | ForEach-Object { Get-Random -Max 256 } | ForEach-Object { [byte]$_ }))
-```
-
-Use the first value as `AUTH_TOKEN` and the second value as `CHECKIN_SECRET`.
-
-They must be different.
-
-#### Get `RESEND_API_KEY`
-
-In the Resend dashboard:
-
-1. Open `API Keys`
-2. Create an API key
-3. Copy the key value
-
-#### Choose `RESEND_FROM_EMAIL`
-
-For self-testing only, you can use:
-
-```text
-onboarding@resend.dev
-```
-
-This is suitable if you only want to send to the same email address associated with your Resend account.
-
-### 6. Upload Secrets To Cloudflare
-
-Run these commands one by one:
-
-```powershell
-npx wrangler@latest secret put AUTH_TOKEN
-npx wrangler@latest secret put CHECKIN_SECRET
-npx wrangler@latest secret put RESEND_API_KEY
-npx wrangler@latest secret put RESEND_FROM_EMAIL
-```
-
-Paste the correct values when Wrangler prompts you.
-
-### 7. First Deploy
-
-Deploy the Worker:
-
-```powershell
-npx wrangler@latest deploy
-```
-
-Cloudflare will print a Worker URL similar to:
-
-```text
-https://lifelong-calendar-reminders.<your-subdomain>.workers.dev
-```
-
-Copy that URL.
-
-### 8. Set `PUBLIC_BASE_URL`
-
-Open [backend/wrangler.jsonc](./backend/wrangler.jsonc) again.
-
-Replace:
-
-```json
-"PUBLIC_BASE_URL": "https://replace-me.workers.dev"
-```
-
-with the real deployed Worker URL.
-
-Then deploy again:
-
-```powershell
-npx wrangler@latest deploy
-```
-
-This second deploy matters because reminder email links are built from `PUBLIC_BASE_URL`.
-
-### 9. Verify The Worker
-
-Open this in your browser:
-
-```text
-<your-worker-url>/health
-```
-
-Expected result:
-
-```json
-{"ok":true}
-```
-
-### 10. Connect The Plugin To The Backend
-
-In Obsidian, open the plugin settings and fill:
-
-- `Backend URL`: your deployed Worker URL
-- `Backend token`: exactly the same value as `AUTH_TOKEN`
-- `Reminder email`: your recipient email
-- `Reminder timezone`: your timezone, for example `Asia/Kolkata`
-- `Reminder time`: for example `20:00`
-- enable `Enable reminders`
-
-Then click:
-
-1. `Save config`
-2. `Sync today`
-3. `Test email`
-
-### 11. End-To-End Reminder Test
-
-Verify the following:
-
-1. The test email arrives.
-2. Clicking the email link opens a confirmation page first.
-3. The day is only marked complete after clicking the confirmation button.
-4. Creating a timeline entry for today and syncing today marks the day complete from the plugin side as well.
-
-### 12. Troubleshooting Reminder Setup
-
-If something fails:
-
-#### Check Worker logs
-
-Run:
-
-```powershell
-npx wrangler@latest tail
-```
-
-Then retry the failed action and inspect the logs.
-
-#### Common issues
-
-- `database_id` in `backend/wrangler.jsonc` was not replaced
-- `binding` was changed from `DB` to something else
-- `PUBLIC_BASE_URL` still points to the placeholder URL
-- `Backend token` in Obsidian does not match `AUTH_TOKEN`
-- `schema.sql` was not applied to the remote D1 database
-- `RESEND_FROM_EMAIL` is invalid for your test mode or domain setup
+If you prefer to set up manually, see [backend/README.md](./backend/README.md#manual-setup-advanced).
 
 ## AI Chat Setup
 
