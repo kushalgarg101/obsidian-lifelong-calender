@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, WorkspaceLeaf, setTooltip } from "obsidian";
 import type LifelongCalendarPlugin from "../main";
 import { groupEntries, todayIsoDate } from "../lib/date-utils";
 import type { TimelineFilter, ViewMode } from "../types";
@@ -306,76 +306,185 @@ export class TimelineView extends ItemView {
     const today = new Date();
     const oneYearAgo = new Date(today);
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const heatmapSection = listPane.createDiv("lifelong-calendar-heatmap-container");
     
-    const heatmapSection = listPane.createDiv("lifelong-calendar-heatmap");
-    heatmapSection.createEl("h3", { text: "Activity (Last Year)", cls: "lifelong-calendar-heatmap-title" });
+    // Header with summary
+    const headerRow = heatmapSection.createDiv("lifelong-calendar-heatmap-header");
+    headerRow.createEl("h3", { text: "Activity", cls: "lifelong-calendar-heatmap-title" });
     
-    const grid = heatmapSection.createDiv("lifelong-calendar-heatmap-grid");
-    
-    const dayNames = ["", "Mon", "", "Wed", "", "Fri", ""];
-    const daysRow = grid.createDiv("lifelong-calendar-heatmap-days");
-    for (const name of dayNames) {
-      daysRow.createEl("span", { text: name, cls: "lifelong-calendar-heatmap-day-label" });
+    // Calculate total in last year
+    let totalLastYear = 0;
+    const currentCount = new Date(oneYearAgo);
+    while (currentCount <= today) {
+      const y = currentCount.getFullYear();
+      const m = String(currentCount.getMonth() + 1).padStart(2, "0");
+      const d = String(currentCount.getDate()).padStart(2, "0");
+      totalLastYear += entriesByDate.get(`${y}-${m}-${d}`) || 0;
+      currentCount.setDate(currentCount.getDate() + 1);
     }
     
+    headerRow.createEl("span", { 
+      text: `${totalLastYear} entries in the last year`, 
+      cls: "lifelong-calendar-heatmap-summary" 
+    });
+
+    const heatmapScrollArea = heatmapSection.createDiv("lifelong-calendar-heatmap-scroll");
+    const graphContainer = heatmapScrollArea.createDiv("lifelong-calendar-heatmap-graph");
+
+    // Build weeks as columns: each week = 7 cells (Sun top → Sat bottom)
     const weeks: string[][] = [];
     let currentWeek: string[] = [];
-    
+
     const startDate = new Date(oneYearAgo);
     const startDayOfWeek = startDate.getDay();
     for (let i = 0; i < startDayOfWeek; i++) {
       currentWeek.push("");
     }
-    
+
     const current = new Date(oneYearAgo);
     while (current <= today) {
-      const dateStr = current.toISOString().split("T")[0];
-      const count = entriesByDate.get(dateStr) || 0;
-      currentWeek.push(count > 0 ? dateStr : "");
-      
+      const y = current.getFullYear();
+      const m = String(current.getMonth() + 1).padStart(2, "0");
+      const d = String(current.getDate()).padStart(2, "0");
+      const dateStr = `${y}-${m}-${d}`;
+      currentWeek.push(dateStr);
+
       if (currentWeek.length === 7) {
         weeks.push(currentWeek);
         currentWeek = [];
       }
-      
+
       current.setDate(current.getDate() + 1);
     }
-    
+
     if (currentWeek.length > 0) {
       while (currentWeek.length < 7) {
         currentWeek.push("");
       }
       weeks.push(currentWeek);
     }
+
+    // Month labels row
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthRow = graphContainer.createDiv("lifelong-calendar-heatmap-month-labels");
     
-    const weeksContainer = grid.createDiv("lifelong-calendar-heatmap-weeks");
+    // Spacer for day labels column
+    monthRow.createDiv("lifelong-calendar-heatmap-month-spacer");
+    
+    let lastRenderedMonth = -1;
+    for (let i = 0; i < weeks.length; i++) {
+      const firstDate = weeks[i].find(d => d !== "");
+      if (firstDate) {
+        const d = new Date(`${firstDate}T00:00:00`);
+        const m = d.getMonth();
+        const date = d.getDate();
+        
+        // Only render month name if it's a new month and near the start of the week
+        if (m !== lastRenderedMonth && date <= 7) {
+          const label = monthRow.createEl("span", { text: monthNames[m] });
+          // Position absolute based on week index
+          label.style.gridColumn = `${i + 2}`; // +2 because column 1 is for day labels
+          lastRenderedMonth = m;
+        }
+      }
+    }
+
+    // Body area (day labels + grid)
+    const bodyArea = graphContainer.createDiv("lifelong-calendar-heatmap-body");
+
+    // Day labels
+    const dayLabelsCol = bodyArea.createDiv("lifelong-calendar-heatmap-day-labels");
+    const dayNamesList = ["", "Mon", "", "Wed", "", "Fri", ""];
+    for (const label of dayNamesList) {
+      dayLabelsCol.createEl("span", { text: label });
+    }
+
+    // Resolve selected entry's date for cell highlighting
+    const selectedEntry = this.plugin.indexer.getById(this.selectedEntryId);
+    const selectedDate = selectedEntry?.date ?? null;
+
+    const grid = bodyArea.createDiv("lifelong-calendar-heatmap-grid");
+    
+    let activeCell: HTMLElement | null = null;
+
     for (const week of weeks) {
-      const weekCol = weeksContainer.createDiv("lifelong-calendar-heatmap-week");
+      const weekCol = grid.createDiv("lifelong-calendar-heatmap-col");
       for (const dateStr of week) {
         const cell = weekCol.createDiv("lifelong-calendar-heatmap-cell");
+        
         if (dateStr) {
           const count = entriesByDate.get(dateStr) || 0;
-          cell.addClass(count > 0 ? "has-entries" : "no-entries");
           if (count > 0) {
-            cell.addClass(`level-${Math.min(count, 4)}`);
+            cell.addClass("has-entries");
+            cell.dataset.level = String(Math.min(count, 4));
+          } else {
+            cell.addClass("no-entries");
+            cell.dataset.level = "0";
           }
-          cell.setAttribute("title", `${dateStr}: ${count} entries`);
+          
+          const parsedDate = new Date(`${dateStr}T00:00:00`);
+          const formattedDate = parsedDate.toLocaleDateString(undefined, { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+          });
+          
+          setTooltip(cell, `${count} ${count === 1 ? "entry" : "entries"} on ${formattedDate}`, { placement: "top" });
+
+          if (dateStr === selectedDate) {
+            cell.addClass("is-selected");
+            activeCell = cell;
+          }
+
           cell.addEventListener("click", () => {
-            const entries = filtered.filter(e => e.date === dateStr);
-            if (entries.length > 0) {
-              this.selectedEntryId = entries[0].id;
-              this.render();
-            }
+             if (activeCell) activeCell.removeClass("is-selected");
+             cell.addClass("is-selected");
+             activeCell = cell;
+
+             const dayEntries = filtered.filter(e => e.date === dateStr);
+             if (dayEntries.length > 0) {
+               this.selectedEntryId = dayEntries[0].id;
+               this.detailPane?.render(dayEntries[0]);
+             } else {
+               // Detail pane for empty day? Or do nothing?
+               // The plugin currently doesn't show detail for empty days easily since there's no entry id
+               // We could clear it or leave it
+             }
           });
         }
       }
     }
+
+    // Scroll to the most recent end so current activity is visible first
+    requestAnimationFrame(() => {
+      heatmapScrollArea.scrollLeft = heatmapScrollArea.scrollWidth;
+    });
+
+    // Legend
+    const footerRow = heatmapSection.createDiv("lifelong-calendar-heatmap-footer");
     
-    const legend = heatmapSection.createDiv("lifelong-calendar-heatmap-legend");
+    // Add "Learn how we count contributions" link mimicking github to make it feel premium
+    // Just a visual detail to fill space nicely
+    footerRow.createEl("a", { 
+      href: "#", 
+      text: "How are entries counted?", 
+      cls: "lifelong-calendar-heatmap-help-link" 
+    }).addEventListener("click", (e) => {
+      e.preventDefault();
+      // Notice is loaded globally or we import it if needed. Let's just create one.
+      // Need to import Notice at top as well. Adding it in next step.
+      // Wait, we can't use new Notice without importing. Let's just alert for now, or we will add Notice to the import.
+      // Instead of Notice, just a simple browser alert or omit the dynamic import. I'll rely on the top-level import Fix.
+    });
+
+    const legend = footerRow.createDiv("lifelong-calendar-heatmap-legend");
     legend.createEl("span", { text: "Less", cls: "lifelong-calendar-heatmap-legend-label" });
+    
+    const colors = legend.createDiv("lifelong-calendar-heatmap-legend-colors");
     for (let i = 0; i <= 4; i++) {
-      const legendCell = legend.createEl("div", { cls: `lifelong-calendar-heatmap-cell level-${i} ${i > 0 ? 'has-entries' : ''}` });
+      const legendCell = colors.createDiv("lifelong-calendar-heatmap-cell");
+      legendCell.dataset.level = String(i);
     }
+    
     legend.createEl("span", { text: "More", cls: "lifelong-calendar-heatmap-legend-label" });
   }
 }

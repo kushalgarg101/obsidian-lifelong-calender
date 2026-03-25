@@ -277,83 +277,197 @@
   outline-offset: -2px;
 }
 
-.lifelong-calendar-heatmap {
-  padding: 0.5rem 0;
+/* --- Premium Heatmap Redesign --- */
+
+.lifelong-calendar-heatmap-container {
+  padding: 1rem;
+  background: var(--background-primary);
+  border-radius: 12px;
+  border: 1px solid var(--background-modifier-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lifelong-calendar-heatmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .lifelong-calendar-heatmap-title {
-  margin-bottom: 0.75rem;
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--text-normal);
 }
 
-.lifelong-calendar-heatmap-grid {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.lifelong-calendar-heatmap-day-label {
-  font-size: 0.65rem;
+.lifelong-calendar-heatmap-summary {
+  font-size: 0.85em;
   color: var(--text-muted);
-  width: 1.2rem;
 }
 
-.lifelong-calendar-heatmap-weeks {
-  display: flex;
-  gap: 2px;
+.lifelong-calendar-heatmap-scroll {
   overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+  
+  /* Hide scrollbar for a cleaner look but keep it functional */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.lifelong-calendar-heatmap-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
-.lifelong-calendar-heatmap-week {
-  display: flex;
+.lifelong-calendar-heatmap-graph {
+  display: inline-flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
+  min-width: max-content; 
+}
+
+/* Month labels container */
+.lifelong-calendar-heatmap-month-labels {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 14px; /* Matches col width + gap */
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.lifelong-calendar-heatmap-month-spacer {
+  grid-column: 1; /* Occupy the space above day labels */
+  width: 30px; 
+}
+
+.lifelong-calendar-heatmap-month-labels span {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lifelong-calendar-heatmap-body {
+  display: flex;
+  gap: 8px;
+}
+
+.lifelong-calendar-heatmap-day-labels {
+  display: grid;
+  grid-template-rows: repeat(7, 14px);
+  gap: 4px;
+}
+
+.lifelong-calendar-heatmap-day-labels span {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  line-height: 14px;
+  text-align: right;
+  padding-right: 4px;
+}
+
+/* 53 weeks wide grid */
+.lifelong-calendar-heatmap-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 14px;
+  gap: 4px;
+}
+
+.lifelong-calendar-heatmap-col {
+  display: grid;
+  grid-template-rows: repeat(7, 14px);
+  gap: 4px;
 }
 
 .lifelong-calendar-heatmap-cell {
-  width: 0.7rem;
-  height: 0.7rem;
-  border-radius: 2px;
-  background: var(--background-secondary);
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background-color: var(--background-secondary-alt);
   cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.1s ease, filter 0.1s ease;
+  position: relative;
+  /* subtle border so empty cells don't blend too much on dark mode */
+  border: 1px solid rgba(128, 128, 128, 0.1); 
 }
 
-.lifelong-calendar-heatmap-cell.no-entries {
-  background: var(--background-secondary);
+/* Color Levels based on density */
+.lifelong-calendar-heatmap-cell[data-level="0"] {
+  background-color: var(--background-secondary-alt);
 }
 
-.lifelong-calendar-heatmap-cell.has-entries.level-1 {
-  background: var(--interactive-accent);
-  opacity: 0.4;
+.lifelong-calendar-heatmap-cell[data-level="1"] {
+  background-color: color-mix(in srgb, var(--interactive-accent) 30%, transparent);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
-.lifelong-calendar-heatmap-cell.has-entries.level-2 {
-  background: var(--interactive-accent);
-  opacity: 0.6;
+.lifelong-calendar-heatmap-cell[data-level="2"] {
+  background-color: color-mix(in srgb, var(--interactive-accent) 55%, transparent);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
-.lifelong-calendar-heatmap-cell.has-entries.level-3 {
-  background: var(--interactive-accent);
-  opacity: 0.8;
+.lifelong-calendar-heatmap-cell[data-level="3"] {
+  background-color: color-mix(in srgb, var(--interactive-accent) 80%, transparent);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
-.lifelong-calendar-heatmap-cell.has-entries.level-4 {
-  background: var(--interactive-accent);
+.lifelong-calendar-heatmap-cell[data-level="4"] {
+  background-color: var(--interactive-accent);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Hover & Interactivity */
 .lifelong-calendar-heatmap-cell:hover {
-  outline: 1px solid var(--text-accent);
+  transform: scale(1.3);
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.2);
+  border-color: var(--text-normal);
+}
+
+.lifelong-calendar-heatmap-cell.is-selected {
+  outline: 2px solid var(--text-normal);
+  outline-offset: 1px;
+  transform: scale(1.1);
+  z-index: 5;
+}
+
+/* Footer & Legend */
+.lifelong-calendar-heatmap-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.lifelong-calendar-heatmap-help-link {
+  font-size: 0.8em;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.lifelong-calendar-heatmap-help-link:hover {
+  color: var(--text-accent);
+  text-decoration: underline;
 }
 
 .lifelong-calendar-heatmap-legend {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  margin-top: 0.75rem;
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  gap: 0.4rem;
 }
 
 .lifelong-calendar-heatmap-legend-label {
-  margin: 0 0.25rem;
+  font-size: 0.75em;
+  color: var(--text-muted);
+}
+
+.lifelong-calendar-heatmap-legend-colors {
+  display: flex;
+  gap: 4px;
 }
 
 .lifelong-calendar-stats {
