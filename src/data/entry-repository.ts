@@ -72,6 +72,7 @@ export class EntryRepository {
       filePath,
       createdAt: now,
       updatedAt: now,
+      favorite: input.favorite ?? false,
       extraFrontmatter: {}
     });
 
@@ -95,7 +96,8 @@ export class EntryRepository {
       links: input.links.map((link) => parseStoredLink(link)),
       note: input.note,
       updatedAt: new Date().toISOString(),
-      filePath: nextPath
+      filePath: nextPath,
+      favorite: input.favorite ?? existing.favorite
     });
 
     const file = this.getRequiredFile(existing.filePath);
@@ -138,6 +140,7 @@ export class EntryRepository {
       delete extraFrontmatter.links;
       delete extraFrontmatter.created_at;
       delete extraFrontmatter.updated_at;
+      delete extraFrontmatter.favorite;
 
       return {
         id,
@@ -149,6 +152,7 @@ export class EntryRepository {
         filePath: file.path,
         createdAt,
         updatedAt,
+        favorite: typeof split.frontmatter.favorite === "boolean" ? split.frontmatter.favorite : false,
         extraFrontmatter
       };
     } catch (error) {
@@ -180,11 +184,16 @@ export class EntryRepository {
       type: entry.type,
       links: entry.links.map((link) => link.raw),
       created_at: entry.createdAt,
-      updated_at: entry.updatedAt
+      updated_at: entry.updatedAt,
+      favorite: entry.favorite
     };
 
     if (!entry.type) {
       delete frontmatter.type;
+    }
+
+    if (!entry.favorite) {
+      delete frontmatter.favorite;
     }
 
     const yaml = stringifyYaml(frontmatter).trimEnd();

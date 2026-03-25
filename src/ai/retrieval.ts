@@ -114,7 +114,7 @@ function scoreChunk(chunk: SourceChunk, queryTokens: string[]): number {
 
 function toPlainText(content: string): string {
   return content
-    .replace(/^---[\s\S]*?---/m, " ")
+    .replace(/^---[\s\S]*?---/, " ")
     .replace(/!\[\[.*?\]\]/g, " ")
     .replace(/\[\[(.*?)\]\]/g, "$1")
     .replace(/\[(.*?)\]\((.*?)\)/g, "$1 $2")

@@ -6,6 +6,7 @@ export const DEFAULT_SETTINGS: TimelineSettings = {
   entriesFolder: "Lifelong Calendar/Entries",
   defaultCategories: ["reading", "learning", "work", "health", "travel", "personal"],
   openInternalInNewLeaf: true,
+  viewMode: "list",
   backendUrl: "",
   backendToken: "",
   reminderEmail: "",

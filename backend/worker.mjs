@@ -75,13 +75,9 @@ async function runReminderSweep(env) {
     const nowMinutes = currentMinutesInTimezone(user.timezone);
     const targetMinutes = hhmmToMinutes(user.reminder_time_local);
 
-    if (nowMinutes < targetMinutes || nowMinutes > targetMinutes + 59) {
+    if (nowMinutes < targetMinutes) {
       continue;
     }
-
-    const status = await env.DB.prepare(
-      "SELECT MAX(complete) AS complete FROM daily_status_sources WHERE email = ? AND date = ?"
-    ).bind(user.email, today).first();
 
     const alreadySent = await env.DB.prepare(
       "SELECT status FROM deliveries WHERE email = ? AND date = ?"
@@ -90,6 +86,10 @@ async function runReminderSweep(env) {
     if (alreadySent) {
       continue;
     }
+
+    const status = await env.DB.prepare(
+      "SELECT MAX(complete) AS complete FROM daily_status_sources WHERE email = ? AND date = ?"
+    ).bind(user.email, today).first();
 
     if (status?.complete === 1) {
       continue;
