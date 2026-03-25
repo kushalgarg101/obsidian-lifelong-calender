@@ -130,8 +130,16 @@ export class EntryIndexer {
       return { currentStreak: 0, longestStreak: 0 };
     }
 
-    const uniqueDates = [...new Set(entries.map(e => e.date))].sort().reverse();
     const today = new Date().toISOString().split("T")[0];
+    const uniqueDates = [...new Set(entries.map(e => e.date))]
+      .filter(date => date <= today)
+      .sort()
+      .reverse();
+
+    if (uniqueDates.length === 0) {
+      return { currentStreak: 0, longestStreak: 0 };
+    }
+
     const yesterdayDate = new Date();
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
     const yesterday = yesterdayDate.toISOString().split("T")[0];
